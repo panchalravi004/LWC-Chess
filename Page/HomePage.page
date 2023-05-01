@@ -1,0 +1,63 @@
+<apex:page showHeader="false" controller="HomePageController" >
+
+    <html lang="en">
+
+        <head>
+            <title>Home</title>
+            
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+             <!-- Latest compiled and minified CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"/>
+
+            <!-- jQuery library -->
+            <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+
+            <!-- Popper JS -->
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+            <!-- Latest compiled JavaScript -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
+            
+            <style>
+              /* .container{
+                display: flex;
+                justify-content: center;
+                align-content: center;
+              } */
+              body{
+                background-color: #212427;
+              }
+            </style>
+
+        </head>
+        <body>
+          <!-- Page Loader Start -->
+          <div class="loader" style="display: flex;justify-content: center;align-items: center; flex-direction: column; position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
+            <i class="fa-solid fa-chess" style="color: white;font-size: 40px; text-shadow: 5px 0px 4px rgb(19, 19, 19); "></i>
+            <span style="color: white;font-size: 25px; margin-bottom: 15px; text-shadow: 5px 0px 4px rgb(19, 19, 19); ">CHESS</span>
+
+            <div class="spinner-border text-success" style="width: 3rem; height: 3rem;" role="status" >
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <!-- Page Loader End -->
+            <apex:includeLightning />
+            <div id="container" class="container pt-2" >
+            </div>
+            <script>
+                $Lightning.use("c:HomeApp", function () {
+                  $Lightning.createComponent(
+                    "c:chessComponent",
+                    { msg: "Chess View LWC." },
+                    "container",
+                    function (cmp) {
+                      console.log('LWC Component Created.');
+                      $('.loader').hide();
+                    }
+                  );
+                });
+              </script>
+        </body>
+    </html>
+
+</apex:page>

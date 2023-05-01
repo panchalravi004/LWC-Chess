@@ -1,0 +1,154 @@
+<template>
+    <!-- 
+    <i class="fa-solid fa-chess-pawn"></i>
+    <i class="fa-solid fa-chess-rook"></i> 
+    <i class="fa-solid fa-chess-knight"></i>
+    <i class="fa-solid fa-chess-bishop"></i>
+    <i class="fa-solid fa-chess-queen"></i>
+    <i class="fa-solid fa-chess-king"></i>
+    -->
+
+    <!-- Toast Messages Start -->
+    <div class="custom-toast-container">
+        <template for:each={toastMessage} for:item="toast">
+
+            <div key={toast} class={toast.variant}>
+                {toast.message}
+            </div>
+        </template>
+    </div>
+    <!-- Toast Messages End -->
+
+    <!-- End Game Modal Start -->
+    <template if:true={isGameEnd}>
+        <template if:false={viewGameEnd}>
+
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+                class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">
+                            <i class="fa-solid fa-chess-king mx-2" style="color: #182242;"></i>
+                            CHESS
+                        </h1>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+                        <h1 class="text-center slds-text-heading_large">{winner} Win !</h1>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <button onclick={handleGameEndView} class="slds-button slds-button_brand">View</button>
+                        <a href="/" class="slds-button slds-button_brand">Restart</a>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+    </template>
+    <!-- End Game Modal End -->
+
+    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2 mb-2">
+        <div class="slds-col slds-size_12-of-12 chess-header">
+            <h1 class="text-white slds-text-heading_medium">
+                <i class="fa-solid fa-chess-king mx-2" style="color: #ffffff;"></i>
+                CHESS
+            </h1>
+            <template if:true={isGameEnd}>
+                <template if:true={viewGameEnd}>
+                    <a href="/" class="slds-button slds-button_brand">Restart</a>
+                </template>
+            </template>
+
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2">
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-wrap" style="height: calc(1px * 8 * var(--column-height)) ;">
+                <div class="slds-col slds-size_12-of-12 ">
+                    <div class="player-head shadow-sm rounded p-2 mb-2 text-white ">
+                        <span>Player 1</span>
+                        <span class="slds-badge slds-badge_lightest">{whiteMinute}:{whiteSecond}</span>
+                    </div>
+                    <div class="player-body">
+                        <template for:each={whiteDeadElement} for:item="ele">
+                            <template if:true={ele}>
+                                <span key={ele} style="position: relative; margin: 5px; ">
+                                    <span style="font-size: 15px; color: white;">x{ele.count}</span>
+                                    <i class={ele.cssClass} style="font-size: 18px; "></i>
+                                </span>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_12-of-12">
+                    <div class="player-head shadow-sm rounded p-2 mb-2 text-light">
+                        <span>Player 2</span>
+                        <span class="slds-badge slds-badge_lightest">{blackMinute}:{blackSecond}</span>
+                    </div>
+                    <div class="player-body">
+                        <template for:each={blackDeadElement} for:item="ele">
+                            <template if:true={ele}>
+                                <span key={ele} style="position: relative; margin: 5px;">
+                                    <span style="font-size: 15px; color: white;">x{ele.count}</span>
+                                    <i class={ele.cssClass}
+                                        style="font-size: 18px;-webkit-text-stroke: 0.3px rgb(0, 0, 0); "></i>
+                                </span>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container Start Here -->
+        <div class="slds-col slds-size_6-of-12 slds-grid slds-wrap">
+            <!-- Outer Loopp -->
+            <template for:each={dataSet} for:item="row" for:index="i">
+
+                <div key={row} class="slds-col slds-size_12-of-12"
+                    style="display: flex;justify-content: center; align-items: center; ">
+                    <!-- Inner Loop -->
+                    <div class="slds-grid slds-wrap">
+                        <template for:each={row} for:item="col" for:index="j">
+
+                            <div key={col} class={col.boxCssClass} data-x={col.x} data-y={col.y} style={col.board_color}
+                                onclick={handleClick}>
+
+                                <i class={col.cssClass}></i>
+
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+            </template>
+        </div>
+        <!-- Main Container End Here -->
+
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_12-of-12 shadow-sm rounded p-2 text-white"
+                    style="background-color: var(--black);">
+                    History
+                </div>
+                <div class="slds-grid slds-wrap slds-col slds-size_12-of-12">
+                    <template for:each={moveHitory} for:item="history" for:index="i">
+
+                        <div key={history} class="slds-col slds-size_6-of-12 p-2 text-white">
+                            <i class={history.cssClass}
+                                style="text-align: center; width: 18px; font-size: 18px;-webkit-text-stroke: 0.3px rgb(0, 0, 0);"></i>
+                            &nbsp;
+                            {history.initial}
+                            &nbsp;
+                            <i class="fa-solid fa-arrow-right"></i>
+                            &nbsp;
+                            {history.end}
+                        </div>
+
+                    </template>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</template>

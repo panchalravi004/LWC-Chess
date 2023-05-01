@@ -1,0 +1,101 @@
+:host{
+    --green:rgb(27, 114, 66);
+    --white:rgb(248, 248, 248);
+    --black:#1e2124;
+    --column-height:65;
+}
+.board-column{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(1px *  var(--column-height)); 
+    height: calc(1px *  var(--column-height));
+    /* background-color: rgb(17, 31, 90); */
+    color: grey;
+}
+.player-white{
+    color: rgb(219, 219, 219);
+    font-size: 35px;
+    /* text-shadow: 0 0 2px rgba(0, 0, 0, 0.527); */
+    -webkit-text-stroke: 1px rgb(58, 58, 58);
+}
+.player-black{
+    color: rgb(46, 46, 46);
+    font-size: 35px;
+}
+.selected {
+    box-shadow:inset 0px 0px 25px rgba(29, 148, 218, 0.774);
+}
+.available {
+    box-shadow:inset 0px 0px 25px rgba(29, 148, 218, 0.774);
+}
+.castle {
+    box-shadow:inset 0px 0px 25px rgba(29, 148, 218, 0.774);
+}
+.available-attack{
+    box-shadow:inset 0px 0px 25px rgba(226, 241, 12, 0.774);
+}
+.available-check{
+    box-shadow:inset 0px 0px 25px rgba(241, 85, 12, 0.774);
+}
+
+.chess-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center ;
+    background-color: transparent;
+    padding: 5px 0px;
+    background-color: var(--black);
+}
+.player-body{
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    height: calc(1px * 3 * var(--column-height));
+}
+.player-body::before{
+    content: "\f439";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #444a50;
+    font-size: 80px !important;
+    font-weight: 900;
+    font: var(--fa-font-solid);
+}
+/* Toast */
+.custom-toast-container{
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* background-color: red; */
+    z-index: 1000;
+}
+.custom-toast{
+    margin: 10px;
+    padding: 5px;
+    min-width: 200px;
+    height: 30px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0px 0px 10px rgba(36, 36, 36, 0.534);
+}
+.custom-toast-success{
+    background-color: rgb(34, 139, 65);
+}
+.custom-toast-warning{
+    background-color: rgb(230, 207, 0);
+}
+.custom-toast-error{
+    background-color: rgb(207, 51, 46);
+}
