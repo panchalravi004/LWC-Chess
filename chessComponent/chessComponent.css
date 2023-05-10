@@ -70,6 +70,23 @@
     font-weight: 900;
     font: var(--fa-font-solid);
 }
+
+.right-side-body{
+    height: 450px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+.right-side-body::-webkit-scrollbar {
+    display: none;
+}  
+
+.replacement-box:hover{
+    color: var(--green);
+    cursor: pointer;
+}
+
+
 /* Toast */
 .custom-toast-container{
     position: absolute;
@@ -91,11 +108,11 @@
     box-shadow: 0px 0px 10px rgba(36, 36, 36, 0.534);
 }
 .custom-toast-success{
-    background-color: rgb(34, 139, 65);
+    background-color: #28a745;
 }
 .custom-toast-warning{
-    background-color: rgb(230, 207, 0);
+    background-color: #ffc107;
 }
 .custom-toast-error{
-    background-color: rgb(207, 51, 46);
+    background-color: #dc3545;;
 }

@@ -46,6 +46,42 @@
     </template>
     <!-- End Game Modal End -->
 
+    <!-- Pawn Replacement Modal Start -->
+    <template if:true={isPawnReplaceMent}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-02" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">
+                        <i class="fa-solid fa-chess-king mx-2"></i>
+                        CHESS - Choose one !
+                    </h1>
+                    
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2" style="display: flex;justify-content: space-around; text-align: center; ">
+                    <div class="replacement-box" data-value="QUEEN" onclick={handlePawnReplacement}  >
+                        <i class="fa-solid fa-chess-queen" style="font-size: 35px;"></i>
+                        <h5>Queen</h5>
+                    </div>
+                    <div class="replacement-box" data-value="ROOK" onclick={handlePawnReplacement} >
+                        <i class="fa-solid fa-chess-rook" style="font-size: 35px;"></i> 
+                        <h5>Rook</h5>
+                    </div>
+                    <div class="replacement-box" data-value="KNIGHT" onclick={handlePawnReplacement} >
+                        <i class="fa-solid fa-chess-knight" style="font-size: 35px;"></i>
+                        <h5>Knight</h5>
+                    </div>
+                    <div class="replacement-box" data-value="BISHOP" onclick={handlePawnReplacement} >
+                        <i class="fa-solid fa-chess-bishop" style="font-size: 35px;"></i>
+                        <h5>Bishop</h5>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open " role="presentation"></div>
+    </template>
+    <!-- Pawn Replacement Modal End -->
+
+    <!-- Chess Main Header Start -->
     <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2 mb-2">
         <div class="slds-col slds-size_12-of-12 chess-header">
             <h1 class="text-white slds-text-heading_medium">
@@ -60,7 +96,11 @@
 
         </div>
     </div>
-    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2">
+    <!-- Chess Main Header End -->
+
+    <!-- Chess Main Body Start -->
+    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2" >
+        <!-- Body Left Side Start -->
         <div class="slds-col slds-size_3-of-12">
             <div class="slds-grid slds-wrap" style="height: calc(1px * 8 * var(--column-height)) ;">
                 <div class="slds-col slds-size_12-of-12 ">
@@ -98,6 +138,7 @@
                 </div>
             </div>
         </div>
+        <!-- Body Left Side End -->
 
         <!-- Main Container Start Here -->
         <div class="slds-col slds-size_6-of-12 slds-grid slds-wrap">
@@ -124,31 +165,37 @@
         </div>
         <!-- Main Container End Here -->
 
+        <!-- Body Right Side Start -->
         <div class="slds-col slds-size_3-of-12">
             <div class="slds-grid slds-wrap">
                 <div class="slds-col slds-size_12-of-12 shadow-sm rounded p-2 text-white"
                     style="background-color: var(--black);">
                     History
                 </div>
-                <div class="slds-grid slds-wrap slds-col slds-size_12-of-12">
-                    <template for:each={moveHitory} for:item="history" for:index="i">
+                <div class="slds-col slds-size_12-of-12 right-side-body right-side-body" >
+                    <div class="slds-grid slds-wrap slds-col slds-size_12-of-12" >
+                        
+                        <template for:each={moveHitory} for:item="history" for:index="i">
 
-                        <div key={history} class="slds-col slds-size_6-of-12 p-2 text-white">
-                            <i class={history.cssClass}
-                                style="text-align: center; width: 18px; font-size: 18px;-webkit-text-stroke: 0.3px rgb(0, 0, 0);"></i>
-                            &nbsp;
-                            {history.initial}
-                            &nbsp;
-                            <i class="fa-solid fa-arrow-right"></i>
-                            &nbsp;
-                            {history.end}
-                        </div>
+                            <div key={history} class="slds-col slds-size_6-of-12 p-2 text-white">
+                                <i class={history.cssClass}
+                                    style="text-align: center; width: 18px; font-size: 18px;-webkit-text-stroke: 0.3px rgb(0, 0, 0);"></i>
+                                &nbsp;
+                                {history.initial}
+                                &nbsp;
+                                <i class="fa-solid fa-arrow-right"></i>
+                                &nbsp;
+                                {history.end}
+                            </div>
 
-                    </template>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- Body Right Side End -->
 
     </div>
+    <!-- Chess Main Body End -->
 
 </template>

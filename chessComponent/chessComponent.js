@@ -66,6 +66,12 @@ export default class ChessComponent extends LightningElement {
     viewGameEnd = false;
     winner = 'none';
 
+    //for pawn replacement
+    isPawnReplaceMent = false;
+    @track pawnElement = null;
+    @track whiteReBorn = {};
+    @track blackReBorn = {};
+
     //sound effect
     moveSound = 'http://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3';
     captureSound = 'http://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3';
@@ -75,11 +81,11 @@ export default class ChessComponent extends LightningElement {
     connectedCallback(){
         //create chess board dataset
         this.createDataSet();
-        
     }
-    
+
     //main click event for box
     handleClick(event){
+
         // console.log(event.currentTarget.dataset);
         var data = event.currentTarget.dataset;
         var currentElement = this.dataSet[data.y][data.x];
@@ -168,10 +174,24 @@ export default class ChessComponent extends LightningElement {
                         // }
                         // console.log('White check : '+this.isWhiteCheck);
                         // console.log('Black check : '+this.isBlackCheck);
-    
+
+                        // check the check mate after this move to the opposite player
+                        // if check mate then game end
                         if(!this.validatePosition((currentElement.color == 'white' ? this.blackKing : this.whiteKing),(currentElement.color == 'white' ? 'black' : 'white'))){
                             console.log('After Attack Check : '+(currentElement.color == 'white' ? 'black' : 'white')+' check');
                             this.validateCheck((currentElement.color == 'white' ? 'black' : 'white'));
+                        }
+
+                        //check the pawn replacement
+                        if(currentElement.type == this.character[5]){
+
+                            if((currentElement.color == 'white' && currentElement.y == 7) || (currentElement.color == 'black' && currentElement.y == 0)){
+                                
+                                console.log('Pawn Replacement !');
+                                this.isPawnReplaceMent = true;
+                                this.pawnElement = {...currentElement};
+                            }
+
                         }
     
                         //store dead element
@@ -307,17 +327,31 @@ export default class ChessComponent extends LightningElement {
                         }
     
                         //for check
-                        if(currentElement.color == 'white'){
-                            this.isBlackCheck = !this.validatePosition(this.blackKing,'black');
-                        }else{
-                            this.isWhiteCheck = !this.validatePosition(this.whiteKing,'white');
-                        }
-                        console.log('White check : '+this.isWhiteCheck);
-                        console.log('Black check : '+this.isBlackCheck);
-    
+                        // if(currentElement.color == 'white'){
+                        //     this.isBlackCheck = !this.validatePosition(this.blackKing,'black');
+                        // }else{
+                        //     this.isWhiteCheck = !this.validatePosition(this.whiteKing,'white');
+                        // }
+                        // console.log('White check : '+this.isWhiteCheck);
+                        // console.log('Black check : '+this.isBlackCheck);
+
+                        // check the check mate after this move to the opposite player
+                        // if check mate then game end
                         if(!this.validatePosition((currentElement.color == 'white' ? this.blackKing : this.whiteKing),(currentElement.color == 'white' ? 'black' : 'white'))){
                             console.log('After Attack Check : '+(currentElement.color == 'white' ? 'black' : 'white')+' check');
                             this.validateCheck((currentElement.color == 'white' ? 'black' : 'white'));
+                        }
+
+                        //check the pawn replacement
+                        if(currentElement.type == this.character[5]){
+
+                            if((currentElement.color == 'white' && currentElement.y == 7) || (currentElement.color == 'black' && currentElement.y == 0)){
+                                
+                                console.log('Pawn Replacement !');
+                                this.isPawnReplaceMent = true;
+                                this.pawnElement = {...currentElement};
+                            }
+
                         }
     
                         //store history of move
@@ -701,20 +735,17 @@ export default class ChessComponent extends LightningElement {
         var king = this.dataSet[kingPosition[0]][kingPosition[1]];
         
         var availableMove = getKingPosition(king,this.dataSet);
-        // console.log(JSON.stringify(availableMove));
+        console.log(JSON.stringify(availableMove));
 
         var totalMove = availableMove.steps.length + availableMove.attacks.length;
         var attackMoves = [];
-        // console.log(JSON.stringify(totalMove));
+        console.log('Total Move : '+totalMove);
 
         availableMove.steps.forEach(([y,x]) => {
-            if(this.dataSet[y][x].current != null && this.dataSet[y][x].color == color){
+
+            attackMoves.push([y,x]);
+            if(!this.validatePosition([y,x],color)){
                 totalMove--;
-            }else{
-                attackMoves.push([y,x]);
-                if(!this.validatePosition([y,x],color)){
-                    totalMove--;
-                }
             }
         });
         
@@ -728,30 +759,53 @@ export default class ChessComponent extends LightningElement {
                 }
             }
         });
-        // console.log(totalMove);
+        console.log('After Cal Total Move : '+totalMove);
+        console.log('All Attacks : '+JSON.stringify(attackMoves));
 
         var isCheckmate = true;
         if(totalMove == 0){
 
-            // console.log('Check Attacks : '+JSON.stringify(attackMoves));
-            attackMoves.forEach(([y,x]) => {
-                if (color == 'white') {
-                    Object.keys(this.whiteAttacksPosition).forEach((key,i) => {
-                        Object.keys(this.whiteAttacksPosition[key]).forEach((innerKey,i) => {
-                            this.whiteAttacksPosition[key][innerKey].forEach(ele => {
-                                if(y == ele[0] && x == ele[1]){
-                                    //change the position for temporary
-                                    var defendElementPosition = this.whiteAttacksPosition[key][innerKey+'-POSITION'];
-                                    var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
-                                    var defendTarget = {...this.dataSet[y][x]};
+            console.log('Check Attacks : '+JSON.stringify(attackMoves));
+            if (color == 'white') {
+                var tempWhite = {...this.whiteAttacksPosition};
 
+                var mainKeys = Object.keys(tempWhite);
+
+                for (let i = 0; i < mainKeys.length; i++) {
+                    
+                    var key = mainKeys[i];
+                    var innerKeys = Object.keys(tempWhite[key]);
+                    
+                    if (!isCheckmate) break;
+
+                    for (let j = 0; j < innerKeys.length; j++) {
+
+                        var innerKey = innerKeys[j];
+
+                        if (!isCheckmate) break;
+
+                        if(!innerKey.includes('-POSITION')){
+                            // console.log(innerKey);
+                            var positions = tempWhite[key][innerKey];
+                            for (let k = 0; k < positions.length; k++) {
+                                var [y,x] = positions[k];
+
+                                if (!isCheckmate) break;
+                                
+                                //change the position for temporary
+                                var defendElementPosition = tempWhite[key][innerKey+'-POSITION'];
+                                var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
+                                var defendTarget = {...this.dataSet[y][x]};
+
+                                if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'black')){
+                                    
                                     this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
                                     this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
                                     //then update new attacking position
                                     this.onPositionChange();
                                     //if element is king then update king position
                                     if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-
+    
                                         this.whiteKing = [defendTarget.y,defendTarget.x];
                                     }
                                     //then, if king not have a check after this move
@@ -766,10 +820,10 @@ export default class ChessComponent extends LightningElement {
                                         // console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
                                     }
                                     if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-
+    
                                         this.whiteKing = [defendElement.y,defendElement.x];
                                     }
-
+    
                                     //replace current to old position
                                     var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
                                     var newDefendTarget = this.dataSet[y][x];
@@ -781,18 +835,45 @@ export default class ChessComponent extends LightningElement {
                                     //then update new attacking position
                                     this.onPositionChange();
                                 }
-                            });
-                        });
-                    });
-                }else{
-                    Object.keys(this.blackAttacksPosition).forEach((key,i) => {
-                        Object.keys(this.blackAttacksPosition[key]).forEach((innerKey,i) => {
-                            this.blackAttacksPosition[key][innerKey].forEach(ele => {
-                                if(y == ele[0] && x == ele[1]){
-                                    //change the position for temporary
-                                    var defendElementPosition = this.blackAttacksPosition[key][innerKey+'-POSITION'];
-                                    var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
-                                    var defendTarget = {...this.dataSet[y][x]};
+                            }
+                        }
+
+                        
+                    }
+                }
+
+            }else{
+                var tempBlack = {...this.blackAttacksPosition};
+
+                var mainKeys = Object.keys(tempBlack);
+
+                for (let i = 0; i < mainKeys.length; i++) {
+                    
+                    var key = mainKeys[i];
+                    var innerKeys = Object.keys(tempBlack[key]);
+                    
+                    if (!isCheckmate) break;
+
+                    for (let j = 0; j < innerKeys.length; j++) {
+
+                        var innerKey = innerKeys[j];
+
+                        if (!isCheckmate) break;
+                        
+                        if(!innerKey.includes('-POSITION')){
+                            // console.log(innerKey);
+                            var positions = tempBlack[key][innerKey];
+                            for (let k = 0; k < positions.length; k++) {
+                                var [y,x] = positions[k];
+
+                                if (!isCheckmate) break;
+
+                                //change the position for temporary
+                                var defendElementPosition = tempBlack[key][innerKey+'-POSITION'];
+                                var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
+                                var defendTarget = {...this.dataSet[y][x]};
+
+                                if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'white')){
 
                                     this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
                                     this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
@@ -800,7 +881,7 @@ export default class ChessComponent extends LightningElement {
                                     this.onPositionChange();
                                     //if element is king then update king position
                                     if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-
+    
                                         this.blackKing = [defendTarget.y,defendTarget.x];
                                     }
                                     //then, if king not have a check after this move
@@ -815,10 +896,10 @@ export default class ChessComponent extends LightningElement {
                                         // console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
                                     }
                                     if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-
+    
                                         this.blackKing = [defendElement.y,defendElement.x];
                                     }
-
+    
                                     //replace current to old position
                                     var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
                                     var newDefendTarget = this.dataSet[y][x];
@@ -830,17 +911,20 @@ export default class ChessComponent extends LightningElement {
                                     //then update new attacking position
                                     this.onPositionChange();
                                 }
-                            });
-                        });
-                    });
+
+                            };
+                        }
+                    }
                 }
-            });
+            }
 
         }else{
             console.log('King Can move in '+totalMove+' ways !');
-            availableMove.steps.forEach(([y,x]) => {
+            attackMoves.forEach(([y,x]) => {
                 //replace king position
                 //then, if check is not available then is check mate is false
+                var temp = {...this.dataSet[y][x]};
+
                 this.dataSet[y][x] = {...this.dataSet[y][x],type:king.type,current:king.current,cssClass:king.cssClass,color:king.color};
                 this.dataSet[kingPosition[0]][kingPosition[1]] = {...king,type:null,current:null,cssClass:null,color:null};
                 
@@ -849,8 +933,8 @@ export default class ChessComponent extends LightningElement {
                 if(this.validatePosition([y,x],color)){
                     isCheckmate = false;
                 }
-                this.dataSet[kingPosition[0]][kingPosition[1]] = {...king,type:this.dataSet[y][x].type,current:this.dataSet[y][x].current,cssClass:this.dataSet[y][x].cssClass,color:this.dataSet[y][x].color};
-                this.dataSet[y][x] = {...this.dataSet[y][x],type:null,current:null,cssClass:null,color:null};
+                this.dataSet[y][x] = {...this.dataSet[y][x],type:temp.type,current:temp.current,cssClass:temp.cssClass,color:temp.color};
+                this.dataSet[kingPosition[0]][kingPosition[1]] = {...king,type:king.type,current:king.current,cssClass:king.cssClass,color:king.color};
 
                 this.onPositionChange();
             });
@@ -981,6 +1065,44 @@ export default class ChessComponent extends LightningElement {
 
         }
         
+    }
+
+    //perform pawn replacement
+    handlePawnReplacement(event){
+
+        var type = event.currentTarget.dataset.value;
+
+        if(this.pawnElement.color == 'white'){
+            
+            if(this.whiteReBorn[type]){
+                this.whiteReBorn = {...this.whiteReBorn,[type]:this.whiteReBorn[type]+1};
+            }else{
+                this.whiteReBorn = {...this.whiteReBorn,[type]:1};
+            }
+    
+            console.log(JSON.stringify(this.whiteReBorn));
+            
+            this.dataSet[this.pawnElement.y][this.pawnElement.x] = {...this.pawnElement,type:type,current:type+this.whiteReBorn[type]+'R',cssClass:"fa-solid fa-chess-"+type.toLowerCase()+" player-white"};
+            console.log(JSON.stringify(this.dataSet[this.pawnElement.y][this.pawnElement.x]));
+            this.pawnElement = null;
+            this.isPawnReplaceMent = false;
+        }else{
+            if(this.blackReBorn[type]){
+                this.blackReBorn = {...this.blackReBorn,[type]:this.blackReBorn[type]+1};
+            }else{
+                this.blackReBorn = {...this.blackReBorn,[type]:1};
+            }
+    
+            console.log(JSON.stringify(this.blackReBorn));
+            
+            this.dataSet[this.pawnElement.y][this.pawnElement.x] = {...this.pawnElement,type:type,current:type+this.blackReBorn[type]+'R',cssClass:"fa-solid fa-chess-"+type.toLowerCase()+" player-black"};
+            console.log(JSON.stringify(this.dataSet[this.pawnElement.y][this.pawnElement.x]));
+            this.pawnElement = null;
+            this.isPawnReplaceMent = false;
+        }
+
+        this.onPositionChange();
+
     }
 
     //clear selected element
@@ -1133,19 +1255,3 @@ export default class ChessComponent extends LightningElement {
     }
     
 }
-
-// import fontawesome from '@salesforce/resourceUrl/fontawesome';
-// import fontawesomeAll from '@salesforce/resourceUrl/fontawesomeAll';
-// import { loadStyle } from 'lightning/platformResourceLoader';
-
-
-// renderedCallback() {
-//     Promise.all([
-//         loadStyle(this, fontawesomeAll + '/css/all.css'),
-//         loadStyle(this, fontawesome + '/css/fontawesome.css')
-//     ]).catch(error => {
-//          // eslint-disable-next-line no-console
-//          console.log(error);
-            
-//     });
-// }
