@@ -763,162 +763,10 @@ export default class ChessComponent extends LightningElement {
         console.log('All Attacks : '+JSON.stringify(attackMoves));
 
         var isCheckmate = true;
-        if(totalMove == 0){
 
-            console.log('Check Attacks : '+JSON.stringify(attackMoves));
-            if (color == 'white') {
-                var tempWhite = {...this.whiteAttacksPosition};
+        //if king can move in any ways
+        if(totalMove != 0){
 
-                var mainKeys = Object.keys(tempWhite);
-
-                for (let i = 0; i < mainKeys.length; i++) {
-                    
-                    var key = mainKeys[i];
-                    var innerKeys = Object.keys(tempWhite[key]);
-                    
-                    if (!isCheckmate) break;
-
-                    for (let j = 0; j < innerKeys.length; j++) {
-
-                        var innerKey = innerKeys[j];
-
-                        if (!isCheckmate) break;
-
-                        if(!innerKey.includes('-POSITION')){
-                            // console.log(innerKey);
-                            var positions = tempWhite[key][innerKey];
-                            for (let k = 0; k < positions.length; k++) {
-                                var [y,x] = positions[k];
-
-                                if (!isCheckmate) break;
-                                
-                                //change the position for temporary
-                                var defendElementPosition = tempWhite[key][innerKey+'-POSITION'];
-                                var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
-                                var defendTarget = {...this.dataSet[y][x]};
-
-                                if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'black')){
-                                    
-                                    this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
-                                    this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
-                                    //then update new attacking position
-                                    this.onPositionChange();
-                                    //if element is king then update king position
-                                    if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-    
-                                        this.whiteKing = [defendTarget.y,defendTarget.x];
-                                    }
-                                    //then, if king not have a check after this move
-                                    //then is check mate = false
-                                    if(this.validatePosition(this.whiteKing,color)){
-                                        isCheckmate = false;
-                                        // console.log('After If '+this.validatePosition(this.whiteKing,color));
-                                        // console.log(JSON.stringify(this.whiteKing)+' '+color);
-                                        // console.log('Element '+JSON.stringify(defendElement));
-                                        // console.log('Target '+JSON.stringify(defendTarget));
-                                        // console.log('Dataset '+JSON.stringify(this.dataSet));
-                                        // console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
-                                    }
-                                    if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-    
-                                        this.whiteKing = [defendElement.y,defendElement.x];
-                                    }
-    
-                                    //replace current to old position
-                                    var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
-                                    var newDefendTarget = this.dataSet[y][x];
-                                    
-                                    this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:newDefendTarget.type,current:newDefendTarget.current,cssClass:newDefendTarget.cssClass,color:newDefendTarget.color};
-                                    this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendTarget.type,current:defendTarget.current,cssClass:defendTarget.cssClass,color:defendTarget.color};
-                                    
-                                    // console.log('New Dataset '+JSON.stringify(this.dataSet));
-                                    //then update new attacking position
-                                    this.onPositionChange();
-                                }
-                            }
-                        }
-
-                        
-                    }
-                }
-
-            }else{
-                var tempBlack = {...this.blackAttacksPosition};
-
-                var mainKeys = Object.keys(tempBlack);
-
-                for (let i = 0; i < mainKeys.length; i++) {
-                    
-                    var key = mainKeys[i];
-                    var innerKeys = Object.keys(tempBlack[key]);
-                    
-                    if (!isCheckmate) break;
-
-                    for (let j = 0; j < innerKeys.length; j++) {
-
-                        var innerKey = innerKeys[j];
-
-                        if (!isCheckmate) break;
-                        
-                        if(!innerKey.includes('-POSITION')){
-                            // console.log(innerKey);
-                            var positions = tempBlack[key][innerKey];
-                            for (let k = 0; k < positions.length; k++) {
-                                var [y,x] = positions[k];
-
-                                if (!isCheckmate) break;
-
-                                //change the position for temporary
-                                var defendElementPosition = tempBlack[key][innerKey+'-POSITION'];
-                                var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
-                                var defendTarget = {...this.dataSet[y][x]};
-
-                                if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'white')){
-
-                                    this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
-                                    this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
-                                    //then update new attacking position
-                                    this.onPositionChange();
-                                    //if element is king then update king position
-                                    if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-    
-                                        this.blackKing = [defendTarget.y,defendTarget.x];
-                                    }
-                                    //then, if king not have a check after this move
-                                    //then is check mate = false
-                                    if(this.validatePosition(this.blackKing,color)){
-                                        isCheckmate = false;
-                                        // console.log('After If '+this.validatePosition(this.blackKing,color));
-                                        // console.log(JSON.stringify(this.blackKing)+' '+color);
-                                        // console.log('Element '+JSON.stringify(defendElement));
-                                        // console.log('Target '+JSON.stringify(defendTarget));
-                                        // console.log('Dataset '+JSON.stringify(this.dataSet));
-                                        // console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
-                                    }
-                                    if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
-    
-                                        this.blackKing = [defendElement.y,defendElement.x];
-                                    }
-    
-                                    //replace current to old position
-                                    var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
-                                    var newDefendTarget = this.dataSet[y][x];
-                                    
-                                    this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:newDefendTarget.type,current:newDefendTarget.current,cssClass:newDefendTarget.cssClass,color:newDefendTarget.color};
-                                    this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendTarget.type,current:defendTarget.current,cssClass:defendTarget.cssClass,color:defendTarget.color};
-                                    
-                                    // console.log('New Dataset '+JSON.stringify(this.dataSet));
-                                    //then update new attacking position
-                                    this.onPositionChange();
-                                }
-
-                            };
-                        }
-                    }
-                }
-            }
-
-        }else{
             console.log('King Can move in '+totalMove+' ways !');
             attackMoves.forEach(([y,x]) => {
                 //replace king position
@@ -940,6 +788,161 @@ export default class ChessComponent extends LightningElement {
             });
 
         }
+
+        //if any element can stop the checkmate by moveing position and attack
+        console.log('Check Attacks : '+JSON.stringify(attackMoves));
+        if (color == 'white') {
+            var tempWhite = {...this.whiteAttacksPosition};
+
+            var mainKeys = Object.keys(tempWhite);
+
+            for (let i = 0; i < mainKeys.length; i++) {
+                
+                var key = mainKeys[i];
+                var innerKeys = Object.keys(tempWhite[key]);
+                
+                if (!isCheckmate) break;
+
+                for (let j = 0; j < innerKeys.length; j++) {
+
+                    var innerKey = innerKeys[j];
+
+                    if (!isCheckmate) break;
+
+                    if(!innerKey.includes('-POSITION')){
+                        // console.log(innerKey);
+                        var positions = tempWhite[key][innerKey];
+                        for (let k = 0; k < positions.length; k++) {
+                            var [y,x] = positions[k];
+
+                            if (!isCheckmate) break;
+                            
+                            //change the position for temporary
+                            var defendElementPosition = tempWhite[key][innerKey+'-POSITION'];
+                            var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
+                            var defendTarget = {...this.dataSet[y][x]};
+
+                            if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'black')){
+                                
+                                this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
+                                this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
+                                //then update new attacking position
+                                this.onPositionChange();
+                                //if element is king then update king position
+                                if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
+
+                                    this.whiteKing = [defendTarget.y,defendTarget.x];
+                                }
+                                //then, if king not have a check after this move
+                                //then is check mate = false
+                                if(this.validatePosition(this.whiteKing,color)){
+                                    isCheckmate = false;
+                                    // console.log('After If '+this.validatePosition(this.whiteKing,color));
+                                    // console.log(JSON.stringify(this.whiteKing)+' '+color);
+                                    // console.log('Element '+JSON.stringify(defendElement));
+                                    // console.log('Target '+JSON.stringify(defendTarget));
+                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    // console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
+                                }
+                                if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
+
+                                    this.whiteKing = [defendElement.y,defendElement.x];
+                                }
+
+                                //replace current to old position
+                                var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
+                                var newDefendTarget = this.dataSet[y][x];
+                                
+                                this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:newDefendTarget.type,current:newDefendTarget.current,cssClass:newDefendTarget.cssClass,color:newDefendTarget.color};
+                                this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendTarget.type,current:defendTarget.current,cssClass:defendTarget.cssClass,color:defendTarget.color};
+                                
+                                // console.log('New Dataset '+JSON.stringify(this.dataSet));
+                                //then update new attacking position
+                                this.onPositionChange();
+                            }
+                        }
+                    }
+
+                    
+                }
+            }
+
+        }else{
+            var tempBlack = {...this.blackAttacksPosition};
+
+            var mainKeys = Object.keys(tempBlack);
+
+            for (let i = 0; i < mainKeys.length; i++) {
+                
+                var key = mainKeys[i];
+                var innerKeys = Object.keys(tempBlack[key]);
+                
+                if (!isCheckmate) break;
+
+                for (let j = 0; j < innerKeys.length; j++) {
+
+                    var innerKey = innerKeys[j];
+
+                    if (!isCheckmate) break;
+                    
+                    if(!innerKey.includes('-POSITION')){
+                        // console.log(innerKey);
+                        var positions = tempBlack[key][innerKey];
+                        for (let k = 0; k < positions.length; k++) {
+                            var [y,x] = positions[k];
+
+                            if (!isCheckmate) break;
+
+                            //change the position for temporary
+                            var defendElementPosition = tempBlack[key][innerKey+'-POSITION'];
+                            var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
+                            var defendTarget = {...this.dataSet[y][x]};
+
+                            if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'white')){
+
+                                this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendElement.type,current:defendElement.current,cssClass:defendElement.cssClass,color:defendElement.color};
+                                this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:null,current:null,cssClass:null,color:null};
+                                //then update new attacking position
+                                this.onPositionChange();
+                                //if element is king then update king position
+                                if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
+
+                                    this.blackKing = [defendTarget.y,defendTarget.x];
+                                }
+                                //then, if king not have a check after this move
+                                //then is check mate = false
+                                if(this.validatePosition(this.blackKing,color)){
+                                    isCheckmate = false;
+                                    // console.log('After If '+this.validatePosition(this.blackKing,color));
+                                    // console.log(JSON.stringify(this.blackKing)+' '+color);
+                                    // console.log('Element '+JSON.stringify(defendElement));
+                                    // console.log('Target '+JSON.stringify(defendTarget));
+                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    // console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
+                                }
+                                if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
+
+                                    this.blackKing = [defendElement.y,defendElement.x];
+                                }
+
+                                //replace current to old position
+                                var defendElement = this.dataSet[defendElementPosition[0]][defendElementPosition[1]];
+                                var newDefendTarget = this.dataSet[y][x];
+                                
+                                this.dataSet[defendElement.y][defendElement.x] = {...defendElement,type:newDefendTarget.type,current:newDefendTarget.current,cssClass:newDefendTarget.cssClass,color:newDefendTarget.color};
+                                this.dataSet[defendTarget.y][defendTarget.x] = {...defendTarget,type:defendTarget.type,current:defendTarget.current,cssClass:defendTarget.cssClass,color:defendTarget.color};
+                                
+                                // console.log('New Dataset '+JSON.stringify(this.dataSet));
+                                //then update new attacking position
+                                this.onPositionChange();
+                            }
+
+                        };
+                    }
+                }
+            }
+        }
+        
 
         this.isGameEnd = isCheckmate;
         this.winner = color == 'white' ? 'Black' : 'White';
