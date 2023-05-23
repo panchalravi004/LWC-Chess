@@ -85,7 +85,7 @@ export default class ChessComponent extends LightningElement {
 
     //main click event for box
     handleClick(event){
-
+        // console.log(event.currentTarget);
         // console.log(event.currentTarget.dataset);
         var data = event.currentTarget.dataset;
         var currentElement = this.dataSet[data.y][data.x];
@@ -149,6 +149,9 @@ export default class ChessComponent extends LightningElement {
                         this.addToastMessage('error',`${this.toggler.toUpperCase()} have Check !`);
                         
                     }else{
+                        // handle animation
+                        this.handleAttackAnimation(event.currentTarget)
+                        
                         //for castle check ROOK moved or not
                         if(currentElement.type == this.character[4]){
                             if(currentElement.color == 'white'){
@@ -1160,6 +1163,32 @@ export default class ChessComponent extends LightningElement {
 
     handleGameEndView(){
         this.viewGameEnd = true;
+    }
+
+    handleAttackAnimation(target){
+        console.log(target);
+        var left = target.offsetLeft;
+        var top = target.offsetTop;
+
+        var flame = this.template.querySelector('.attack-animation-image');
+        flame.style.display = 'block';
+        flame.style.left = left+'px';
+        flame.style.top = top+'px';
+        
+        var count = 0;
+        var speed = 2;
+        var a = setInterval(() => {
+            if(count >= 100){
+                clearInterval(a);
+                flame.style.display = 'none';
+                flame.style.left = '0px';
+                flame.style.top = '0px';
+            }
+            flame.style.top = (top - count)+'px';
+            flame.style.opacity = (100 - count) / 100;
+            count += speed;
+        }, 5);
+
     }
 
     //create initial dataset
