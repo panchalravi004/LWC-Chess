@@ -86,6 +86,13 @@
     cursor: pointer;
 }
 
+.attack-animation-image{
+    display: none;
+    position: absolute;
+    width: 70px;
+    height: 70px;
+}
+
 
 /* Toast */
 .custom-toast-container{
