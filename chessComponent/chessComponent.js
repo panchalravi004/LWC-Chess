@@ -698,14 +698,17 @@ export default class ChessComponent extends LightningElement {
                 Object.keys(this.blackAttacksPosition[key]).forEach((innerKey,i) => {
                     // console.log('inner');
                     // console.log(JSON.stringify(this.blackAttacksPosition[key][innerKey]));
-                    this.blackAttacksPosition[key][innerKey].forEach(ele => {
-                        // console.log(JSON.stringify(ele[0]));
-                        if(position[0] == ele[0] && position[1] == ele[1]){
-                            // console.log(position[0]+' '+position[1]+' '+ele[0]+' '+ele[1]);
-                            a = false;
-                            console.log('validatePosition : White Check');
-                        }
-                    });
+                    // Not include PAWN - STEPS In this case AND also not include All Elements Positions in this
+                    if(!innerKey.includes('-STEPS') && !innerKey.includes('-POSITION')){
+                        this.blackAttacksPosition[key][innerKey].forEach(ele => {
+                            // console.log(JSON.stringify(ele[0]));
+                            if(position[0] == ele[0] && position[1] == ele[1]){
+                                // console.log(position[0]+' '+position[1]+' '+ele[0]+' '+ele[1]);
+                                a = false;
+                                console.log('validatePosition : White Check');
+                            }
+                        });
+                    }
                 });
             });
         }
@@ -717,14 +720,17 @@ export default class ChessComponent extends LightningElement {
                 Object.keys(this.whiteAttacksPosition[key]).forEach((innerKey,i) => {
                     // console.log('inner');
                     // console.log(JSON.stringify(this.whiteAttacksPosition[key][innerKey]));
-                    this.whiteAttacksPosition[key][innerKey].forEach(ele => {
-                        // console.log(JSON.stringify(ele[0]));
-                        if(position[0] == ele[0] && position[1] == ele[1]){
-                            // console.log(position[0]+' '+position[1]+' '+ele[0]+' '+ele[1]);
-                            a = false;
-                            console.log('validatePosition : Black Check');
-                        }
-                    });
+                    // Not include PAWN - STEPS In this case AND also not include All Elements Positions in this
+                    if(!innerKey.includes('-STEPS') && !innerKey.includes('-POSITION')){
+                        this.whiteAttacksPosition[key][innerKey].forEach(ele => {
+                            // console.log(JSON.stringify(ele[0]));
+                            if(position[0] == ele[0] && position[1] == ele[1]){
+                                // console.log(position[0]+' '+position[1]+' '+ele[0]+' '+ele[1]);
+                                a = false;
+                                console.log('validatePosition : Black Check');
+                            }
+                        });
+                    }
                 });
             });
         }
@@ -821,9 +827,16 @@ export default class ChessComponent extends LightningElement {
                             if (!isCheckmate) break;
                             
                             //change the position for temporary
-                            var defendElementPosition = tempWhite[key][innerKey+'-POSITION'];
+                            // inner condition for position is for pawn
+                            var defendElementPosition = tempWhite[key][(innerKey.includes('-STEPS') || innerKey.includes('-ATTACKS') ? innerKey.split('-')[0] : innerKey  )+'-POSITION'];
                             var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
                             var defendTarget = {...this.dataSet[y][x]};
+
+                            // Pawn : give condition for pawn attacks and steps
+                            // Pawn : skip empty target for attacks and not empty target for steps 
+                            if (key == this.character[5] && ((innerKey.includes('-STEPS') && defendTarget.current != null) || (innerKey.includes('-ATTACKS') && defendTarget.current == null))) {
+                                continue;
+                            }
 
                             if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'black')){
                                 
@@ -840,12 +853,12 @@ export default class ChessComponent extends LightningElement {
                                 //then is check mate = false
                                 if(this.validatePosition(this.whiteKing,color)){
                                     isCheckmate = false;
-                                    console.log('After If '+this.validatePosition(this.whiteKing,color));
-                                    console.log(JSON.stringify(this.whiteKing)+' '+color);
-                                    console.log('Element '+JSON.stringify(defendElement));
-                                    console.log('Target '+JSON.stringify(defendTarget));
-                                    console.log('Dataset '+JSON.stringify(this.dataSet));
-                                    console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
+                                    // console.log('After If '+this.validatePosition(this.whiteKing,color));
+                                    // console.log(JSON.stringify(this.whiteKing)+' '+color);
+                                    // console.log('Element '+JSON.stringify(defendElement));
+                                    // console.log('Target '+JSON.stringify(defendTarget));
+                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    // console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
                                 }
                                 if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
 
@@ -896,10 +909,17 @@ export default class ChessComponent extends LightningElement {
 
                             if (!isCheckmate) break;
 
-                            //change the position for temporary
-                            var defendElementPosition = tempBlack[key][innerKey+'-POSITION'];
+                            // change the position for temporary
+                            // inner condition for position is for pawn
+                            var defendElementPosition = tempBlack[key][(innerKey.includes('-STEPS') || innerKey.includes('-ATTACKS') ? innerKey.split('-')[0] : innerKey  )+'-POSITION'];//update this for pawn
                             var defendElement = {...this.dataSet[defendElementPosition[0]][defendElementPosition[1]]};
                             var defendTarget = {...this.dataSet[y][x]};
+
+                            // Pawn : give condition for pawn attacks and steps
+                            // Pawn : skip empty target for attacks and not empty target for steps 
+                            if (key == this.character[5] && ((innerKey.includes('-STEPS') && defendTarget.current != null) || (innerKey.includes('-ATTACKS') && defendTarget.current == null))) {
+                                continue;
+                            }
 
                             if(defendTarget.current == null || (defendTarget.current != null && defendTarget.color == 'white')){
 
@@ -916,12 +936,12 @@ export default class ChessComponent extends LightningElement {
                                 //then is check mate = false
                                 if(this.validatePosition(this.blackKing,color)){
                                     isCheckmate = false;
-                                    console.log('After If '+this.validatePosition(this.blackKing,color));
-                                    console.log(JSON.stringify(this.blackKing)+' '+color);
-                                    console.log('Element '+JSON.stringify(defendElement));
-                                    console.log('Target '+JSON.stringify(defendTarget));
-                                    console.log('Dataset '+JSON.stringify(this.dataSet));
-                                    console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
+                                    // console.log('After If '+this.validatePosition(this.blackKing,color));
+                                    // console.log(JSON.stringify(this.blackKing)+' '+color);
+                                    // console.log('Element '+JSON.stringify(defendElement));
+                                    // console.log('Target '+JSON.stringify(defendTarget));
+                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    // console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
                                 }
                                 if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
 
@@ -945,7 +965,6 @@ export default class ChessComponent extends LightningElement {
                 }
             }
         }
-        
 
         this.isGameEnd = isCheckmate;
         this.winner = color == 'white' ? 'Black' : 'White';
@@ -967,10 +986,10 @@ export default class ChessComponent extends LightningElement {
                 if(element.type == this.character[5]){
                     var a = getPawnPosition(element,this.dataSet);
                     if(element.color == 'white'){
-                        this.whiteAttacksPosition = {...this.whiteAttacksPosition,[element.type]:{...this.whiteAttacksPosition[element.type],[element.current]:[...a.attacks],[element.current+'-POSITION']:[y,x]}};
+                        this.whiteAttacksPosition = {...this.whiteAttacksPosition,[element.type]:{...this.whiteAttacksPosition[element.type],[element.current+'-STEPS']:[...a.steps],[element.current+'-ATTACKS']:[...a.attacks],[element.current+'-POSITION']:[y,x]}};
                         
                     }else{
-                        this.blackAttacksPosition = {...this.blackAttacksPosition,[element.type]:{...this.blackAttacksPosition[element.type],[element.current]:[...a.attacks],[element.current+'-POSITION']:[y,x]}};
+                        this.blackAttacksPosition = {...this.blackAttacksPosition,[element.type]:{...this.blackAttacksPosition[element.type],[element.current+'-STEPS']:[...a.steps],[element.current+'-ATTACKS']:[...a.attacks],[element.current+'-POSITION']:[y,x]}};
                     }
                 }
                 else if(element.type == this.character[4]){
@@ -1213,9 +1232,9 @@ export default class ChessComponent extends LightningElement {
                     cssClass = col == 2 ? 'fa-solid fa-chess-pawn player-white' : 'fa-solid fa-chess-pawn player-black';
                     color = col == 2 ? 'white' : 'black';
                     if(col == 2){
-                        this.whiteAttacksPosition = {...this.whiteAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
+                        this.whiteAttacksPosition = {...this.whiteAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name+'-STEPS']:[],[name+'-ATTACKS']:[],[name+'-POSITION']:[j,i]}};
                     }else{
-                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.blackAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
+                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.blackAttacksPosition[type],[name+'-STEPS']:[],[name+'-ATTACKS']:[],[name+'-POSITION']:[j,i]}};
                     }
                 }
                 else if(col == 1 || col == 8){
