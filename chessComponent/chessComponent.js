@@ -840,12 +840,12 @@ export default class ChessComponent extends LightningElement {
                                 //then is check mate = false
                                 if(this.validatePosition(this.whiteKing,color)){
                                     isCheckmate = false;
-                                    // console.log('After If '+this.validatePosition(this.whiteKing,color));
-                                    // console.log(JSON.stringify(this.whiteKing)+' '+color);
-                                    // console.log('Element '+JSON.stringify(defendElement));
-                                    // console.log('Target '+JSON.stringify(defendTarget));
-                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
-                                    // console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
+                                    console.log('After If '+this.validatePosition(this.whiteKing,color));
+                                    console.log(JSON.stringify(this.whiteKing)+' '+color);
+                                    console.log('Element '+JSON.stringify(defendElement));
+                                    console.log('Target '+JSON.stringify(defendTarget));
+                                    console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    console.log('Black Attack Position '+JSON.stringify(this.blackAttacksPosition));
                                 }
                                 if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
 
@@ -916,12 +916,12 @@ export default class ChessComponent extends LightningElement {
                                 //then is check mate = false
                                 if(this.validatePosition(this.blackKing,color)){
                                     isCheckmate = false;
-                                    // console.log('After If '+this.validatePosition(this.blackKing,color));
-                                    // console.log(JSON.stringify(this.blackKing)+' '+color);
-                                    // console.log('Element '+JSON.stringify(defendElement));
-                                    // console.log('Target '+JSON.stringify(defendTarget));
-                                    // console.log('Dataset '+JSON.stringify(this.dataSet));
-                                    // console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
+                                    console.log('After If '+this.validatePosition(this.blackKing,color));
+                                    console.log(JSON.stringify(this.blackKing)+' '+color);
+                                    console.log('Element '+JSON.stringify(defendElement));
+                                    console.log('Target '+JSON.stringify(defendTarget));
+                                    console.log('Dataset '+JSON.stringify(this.dataSet));
+                                    console.log('White Attack Position '+JSON.stringify(this.whiteAttacksPosition));
                                 }
                                 if(this.dataSet[defendTarget.y][defendTarget.x].type == this.character[0]){
 
@@ -1215,7 +1215,7 @@ export default class ChessComponent extends LightningElement {
                     if(col == 2){
                         this.whiteAttacksPosition = {...this.whiteAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
                     }else{
-                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
+                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.blackAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
                     }
                 }
                 else if(col == 1 || col == 8){
@@ -1262,7 +1262,7 @@ export default class ChessComponent extends LightningElement {
                     if(col == 1){
                         this.whiteAttacksPosition = {...this.whiteAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
                     }else{
-                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.whiteAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
+                        this.blackAttacksPosition = {...this.blackAttacksPosition,[type]:{...this.blackAttacksPosition[type],[name]:[],[name+'-POSITION']:[j,i]}};
                     }
                 }
 
