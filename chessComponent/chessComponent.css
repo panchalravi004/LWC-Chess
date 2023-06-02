@@ -123,3 +123,38 @@
 .custom-toast-error{
     background-color: #dc3545;;
 }
+
+/* Media Query Goes Here */
+/* Break Point 1200, */
+
+@media screen and (max-width: 1200px) {
+    :host{
+        --column-height:57;
+    }
+    .attack-animation-image{
+        width: 62px;
+        height: 62px;
+    }
+    
+    @media screen and (max-width: 850px) {
+        :host{
+            --column-height:45;
+        }
+        .player-white,.player-black{
+            font-size: 25px;
+        }
+        .attack-animation-image{
+            width: 45px;
+            height: 45px;
+        }
+        .board-center,.board-left,.board-right{
+            width: 100%;
+        }
+        .board-left_top,.board-left_bottom{
+            width: 50%;
+        }
+        .right-side-body{
+            height: 250px;
+        }
+    }
+}

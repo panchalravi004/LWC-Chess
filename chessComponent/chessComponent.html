@@ -102,12 +102,12 @@
     <!-- Chess Main Header End -->
 
     <!-- Chess Main Body Start -->
-    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2" >
+    <div class="slds-grid slds-wrap bg-dark shadow-sm rounded p-2 mb-2" >
         <!-- Body Left Side Start -->
-        <div class="slds-col slds-size_3-of-12">
-            <div class="slds-grid slds-wrap" style="height: calc(1px * 8 * var(--column-height)) ;">
-                <div class="slds-col slds-size_12-of-12 ">
-                    <div class="player-head shadow-sm rounded p-2 mb-2 text-white ">
+        <div class="slds-col slds-size_3-of-12 board-left">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_12-of-12 board-left_top">
+                    <div class="player-head shadow-sm rounded p-2 m-2 text-white ">
                         <span>Player 1</span>
                         <span class="slds-badge slds-badge_lightest">{whiteMinute}:{whiteSecond}</span>
                     </div>
@@ -122,8 +122,8 @@
                         </template>
                     </div>
                 </div>
-                <div class="slds-col slds-size_12-of-12">
-                    <div class="player-head shadow-sm rounded p-2 mb-2 text-light">
+                <div class="slds-col slds-size_12-of-12 board-left_bottom">
+                    <div class="player-head shadow-sm rounded p-2 m-2 text-light">
                         <span>Player 2</span>
                         <span class="slds-badge slds-badge_lightest">{blackMinute}:{blackSecond}</span>
                     </div>
@@ -144,7 +144,7 @@
         <!-- Body Left Side End -->
 
         <!-- Main Container Start Here -->
-        <div class="slds-col slds-size_6-of-12 slds-grid slds-wrap">
+        <div class="slds-col slds-size_6-of-12 slds-grid slds-wrap board-center">
             <!-- Outer Loopp -->
             <template for:each={dataSet} for:item="row" for:index="i">
 
@@ -168,9 +168,9 @@
         <!-- Main Container End Here -->
 
         <!-- Body Right Side Start -->
-        <div class="slds-col slds-size_3-of-12">
+        <div class="slds-col slds-size_3-of-12 board-right">
             <div class="slds-grid slds-wrap">
-                <div class="slds-col slds-size_12-of-12 shadow-sm rounded p-2 text-white"
+                <div class="slds-col slds-size_12-of-12 shadow-sm rounded p-2 mt-2 text-white"
                     style="background-color: var(--black);">
                     History
                 </div>
