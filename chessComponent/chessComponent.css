@@ -29,6 +29,9 @@
 .available {
     box-shadow:inset 0px 0px 25px rgba(29, 148, 218, 0.774);
 }
+.available:hover, .available-attack:hover{
+    border: 2px solid rgb(43, 43, 43);
+}
 .castle {
     box-shadow:inset 0px 0px 25px rgba(29, 148, 218, 0.774);
 }

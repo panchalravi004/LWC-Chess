@@ -26,6 +26,7 @@
               } */
               body{
                 background-color: #212427;
+                cursor:pointer;
               }
             </style>
 
