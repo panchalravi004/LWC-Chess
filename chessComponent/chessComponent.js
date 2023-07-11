@@ -1,6 +1,5 @@
 import { LightningElement, track } from 'lwc';
 import {getPawnPosition,getRookPosition,getBishopPosition,getKnightPosition, getQueenPosition, getKingPosition} from './utilities';	
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ChessComponent extends LightningElement {
     
@@ -51,7 +50,7 @@ export default class ChessComponent extends LightningElement {
     @track toastMessage = [];
 
     //store history of move
-    @track moveHitory = [];
+    @track moveHistory = [];
 
     //player timer
     whiteSecond = 0;
@@ -211,7 +210,7 @@ export default class ChessComponent extends LightningElement {
                         }
     
                         //store history of move
-                        this.moveHitory.push({initial:this.selectedElement.position,end:currentElement.position,cssClass:currentElement.cssClass});
+                        this.moveHistory.push({initial:this.selectedElement.position,end:currentElement.position,cssClass:currentElement.cssClass});
     
                         //play capture sound
                         this.playAudio(this.captureSound);
@@ -228,8 +227,7 @@ export default class ChessComponent extends LightningElement {
                     this.clearAvailableChecks();
                     //clear all available castle
                     this.clearAvailableCastle();
-    
-                    
+
                 }
                 else{
                     if (currentElement.color == this.toggler) {
@@ -358,14 +356,14 @@ export default class ChessComponent extends LightningElement {
                         }
     
                         //store history of move
-                        this.moveHitory.push({initial:this.selectedElement.position,end:currentElement.position,cssClass:currentElement.cssClass});
+                        this.moveHistory.push({initial:this.selectedElement.position,end:currentElement.position,cssClass:currentElement.cssClass});
     
                         //play move sound
                         this.playAudio(this.moveSound);
         
                         //call toggler
                         this.toggleMove();
-    
+
                     }
     
                     // console.log(JSON.stringify(this.whiteAttacksPosition));
@@ -428,8 +426,7 @@ export default class ChessComponent extends LightningElement {
         
                     //call toggler
                     this.toggleMove();
-    
-    
+
                 }
     
                 //clear all available
@@ -1092,7 +1089,7 @@ export default class ChessComponent extends LightningElement {
         
     }
 
-    //perform pawn replacement
+    //perform pawn replacement : onClick : When Element Select
     handlePawnReplacement(event){
 
         var type = event.currentTarget.dataset.value;
@@ -1304,5 +1301,77 @@ export default class ChessComponent extends LightningElement {
         });
         console.log(JSON.stringify(this.dataSet));
     }
+
+    websocket;
     
+    createWebSocket() {
+        var wsUri = 'wss://socketsbay.com/wss/v2/24/0e6984244b6e8be525ee80648bb3ffcf/';
+        this.websocket = new WebSocket(wsUri);
+        this.websocket.onopen = this.onOpen.bind(this);
+        // this.websocket.onclose = this.onClose.bind(this);
+        this.websocket.onmessage = this.onMessage.bind(this);
+        // this.websocket.onerror = this.onError.bind(this);
+    }
+  
+    onOpen(evt) {
+      console.log('CONNECTED');
+    }
+  
+    onClose(evt) {
+      console.log('Websocket DISCONNECTED');
+    }
+  
+    onMessage(evt) {
+        console.log(evt.data);
+        var d = JSON.parse(evt.data);
+
+        this.dataSet = [...d.dataSet];
+        this.whiteKing = [...d.whiteKing];
+        this.blackKing = [...d.blackKing];
+        this.winner = d.winner;
+        this.moveHistory = [...d.moveHistory];
+        this.whiteDeadElement = [...d.whiteDeadElement];
+        this.blackDeadElement = [...d.blackDeadElement];
+        this.isGameEnd = d.isGameEnd;
+        this.whiteFirstMove = d.whiteFirstMove;
+        this.blackFirstMove = d.blackFirstMove;
+
+        //clear all selected
+        this.clearSelected();
+        //clear all available steps
+        this.clearAvailableSteps();
+        //clear all available attacks
+        this.clearAvailableAttacks();
+        //clear all available checks
+        this.clearAvailableChecks();
+        //clear all available castle
+        this.clearAvailableCastle();
+
+        this.toggleMove();
+
+    }
+  
+    sendMessage() {
+      this.websocket.send('Hello ');
+    }
+
+    sendDataOnSocket(){
+        var d = {
+            "dataSet":[...this.dataSet],
+            "whiteKing":[...this.whiteKing],
+            "blackKing":[...this.blackKing],
+            "winner":this.winner,
+            "moveHistory":[...this.moveHistory],
+            "whiteDeadElement":[...this.whiteDeadElement],
+            "blackDeadElement":[...this.blackDeadElement],
+            "isGameEnd":this.isGameEnd,
+            "whiteFirstMove" : this.whiteFirstMove,
+            "blackFirstMove" : this.blackFirstMove,
+            "whiteSecond" : this.whiteSecond,
+            "blackSecond" : this.blackSecond,
+            "whiteMinute" : this.whiteMinute,
+            "blackMinute" : this.blackMinute
+        };
+          this.websocket.send(JSON.stringify(d));
+    }
 }

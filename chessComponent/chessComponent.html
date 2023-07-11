@@ -1,4 +1,7 @@
 <template>
+
+    <!-- <button onclick={createWebSocket}>connect</button> -->
+    <!-- <button onclick={sendMessage}>send</button> -->
     <!-- 
     <i class="fa-solid fa-chess-pawn"></i>
     <i class="fa-solid fa-chess-rook"></i> 
@@ -80,6 +83,34 @@
         <div class="slds-backdrop slds-backdrop_open " role="presentation"></div>
     </template>
     <!-- Pawn Replacement Modal End -->
+
+    <!-- Start Game Modal Start -->
+    <!-- <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-03"
+        class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate" tabindex="-1">
+                    <i class="fa-solid fa-chess-king mx-2" style="color: #182242;"></i>
+                    CHESS
+                </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3" >
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_4-of-12" style="display: flex;justify-content: center; ">
+                        <button class="slds-button slds-button_brand">Create Room</button>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12" style="display: flex;justify-content: center; ">
+                        <button class="slds-button slds-button_brand">Join Room</button>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12" style="display: flex;justify-content: center; ">
+                        <button class="slds-button slds-button_brand">Local</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div> -->
+    <!-- Start Game Modal End -->
 
     <!-- Pawn Attack Image -->
     <img class="attack-animation-image" src="https://i.ibb.co/BPgRF0t/flame.png" />
@@ -177,7 +208,7 @@
                 <div class="slds-col slds-size_12-of-12 right-side-body right-side-body" >
                     <div class="slds-grid slds-wrap slds-col slds-size_12-of-12" >
                         
-                        <template for:each={moveHitory} for:item="history" for:index="i">
+                        <template for:each={moveHistory} for:item="history" for:index="i">
 
                             <div key={history} class="slds-col slds-size_6-of-12 p-2 text-white">
                                 <i class={history.cssClass}
