@@ -1257,7 +1257,7 @@ export default class ChessComponent extends LightningElement {
                         cssClass = col == 1 ? 'fa-solid fa-chess-bishop player-white' : 'fa-solid fa-chess-bishop player-black';
                     }
                     //QUEEN
-                    else if(row == 'D'){
+                    else if(row == 'E'){
                         type = this.character[1];
                         name = this.character[1];
                         cssClass = col == 1 ? 'fa-solid fa-chess-queen player-white' : 'fa-solid fa-chess-queen player-black';
